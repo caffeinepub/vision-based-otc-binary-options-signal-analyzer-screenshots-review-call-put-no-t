@@ -1,0 +1,114 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T15:50:03.988Z",
+  "summary": "Diff adds a frontend dashboard shell with asset picker (EUR/USD OTC, USD/JPY OTC), screenshot upload with validation+preview, review/confirm UI, confluence UI, risk panel UI, performance stats UI, outcome controls UI, and a candle timer with optional sound. Backend main.mo introduces TradeAnalysis storage structures plus authorization/user profile scaffolding, but key required fields/method behavior is not fully evidenced in the truncated backend diff.",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "Backend analysis records must include uploaded-image metadata reference (frontend-side), timeframe(s) assessed, extracted features, and corrected features; and support updating an existing record with corrections and outcome.",
+      "reason": "The shown TradeAnalysis type includes asset, signals, confidence, timestamps, outcome, and many indicator stats, but there is no explicit field for image metadata reference, no explicit timeframe(s) assessed field, and no explicit extracted-vs-corrected feature separation evidenced in the visible portion. Also, the visible backend section does not show the required create/list/update methods (only profile methods are shown before truncation).",
+      "evidence": [
+        "backend/main.mo (TradeAnalysis type shown; no timeframe/image metadata fields visible; backend methods for analyses not visible in shown portion)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Use the platform’s built-in vision extraction step to derive structured features from the uploaded screenshot and handle extraction failures/incompleteness while allowing manual entry before confirmation.",
+      "reason": "Frontend includes a Review & Confirm panel that edits an `ExtractedFeatures` object, but the diff does not show any code performing image-to-features vision extraction, nor any explicit extraction-failure handling pipeline from the uploaded screenshot into `ExtractedFeatures`.",
+      "evidence": [
+        "frontend/src/components/review/ReviewConfirmPanel.tsx",
+        "frontend/src/components/upload/ScreenshotUploadCard.tsx"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "Prevent the user from recording new trades as “taken” once the daily stop-loss limit is hit.",
+      "reason": "RiskPanel displays a stop-loss-hit warning, and OutcomeControls supports a `disabled` prop, but the diff does not show wiring that computes cumulative daily losses from outcomes and actually disables/block the 'Taken' toggle when the stop-loss limit is reached.",
+      "evidence": [
+        "frontend/src/components/risk/RiskPanel.tsx",
+        "frontend/src/components/history/OutcomeControls.tsx"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Each history item has controls to set outcome to Win, Loss, Not Taken, or Unknown (and persist per user).",
+      "reason": "OutcomeControls provides Win/Loss/Unknown buttons only when `taken` is true, and a separate Taken/Not Taken toggle. There is no explicit 'Not Taken' outcome selection shown; whether the toggle maps to Outcome.notTaken is not evidenced. Persistence of outcomes/aggregates via backend is also not evidenced in the shown UI components.",
+      "evidence": [
+        "frontend/src/components/history/OutcomeControls.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "User profile onboarding (name capture) and preferred asset in backend profile type.",
+      "reason": "BuildRequest did not ask for user profiles or name collection; it only required Internet Identity sign-in for associating history/stats with the principal.",
+      "evidence": [
+        "backend/main.mo (UserProfile type, userProfiles map, profile methods)",
+        "frontend/src/components/auth/ProfileSetupModal.tsx",
+        "frontend/src/components/layout/AppShell.tsx (Welcome, {userProfile.name})"
+      ]
+    },
+    {
+      "description": "Custom backend access control initialization with admin secret token parameter (caffeineAdminToken) and authorization mixins.",
+      "reason": "BuildRequest did not request role-based access control or admin-token initialization; it only constrained auth to Internet Identity for users.",
+      "evidence": [
+        "backend/main.mo (AccessControl, MixinAuthorization)",
+        "frontend/src/hooks/useActor.ts (calls _initializeAccessControlWithSecret using caffeineAdminToken)"
+      ]
+    },
+    {
+      "description": "Large set of extra indicator fields (EMA/MACD/HMA/ADX/DMI/Stochastic/etc.) beyond the requested RSI and Bollinger examples.",
+      "reason": "REQ-3 only explicitly called out candle properties and indicator states/values (examples: RSI and Bollinger). The diff adds many additional indicator fields in the stored analysis record that were not requested.",
+      "evidence": [
+        "backend/main.mo (TradeAnalysis.indicators fields: emaSlow/emaFast/stochastic/macd/hma/adx/dmi/etc.)"
+      ]
+    },
+    {
+      "description": "Caffeine.ai promotional footer with dynamic UTM link.",
+      "reason": "Not requested by BuildRequest requirements or acceptance criteria.",
+      "evidence": [
+        "frontend/src/components/layout/AppShell.tsx (footer link to caffeine.ai with UTM params)"
+      ]
+    }
+  ],
+  "confidence": 0.66,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/asset/AssetPicker.tsx",
+    "frontend/src/components/auth/LoginButton.tsx",
+    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "frontend/src/components/confluence/ConfluenceDashboard.tsx",
+    "frontend/src/components/history/AnalysisHistoryPanel.tsx",
+    "frontend/src/components/history/OutcomeControls.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/review/ReviewConfirmPanel.tsx",
+    "frontend/src/components/risk/RiskPanel.tsx",
+    "frontend/src/components/signal/SignalResultCard.tsx",
+    "frontend/src/components/stats/PerformanceStatsPanel.tsx",
+    "frontend/src/components/timer/CandleTimer.tsx",
+    "frontend/src/components/upload/ScreenshotUploadCard.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/confluence/confluenceEngine.ts",
+    "frontend/src/lib/engine/combinedSignalEngine.ts",
+    "frontend/src/lib/risk/riskCalculator.ts",
+    "frontend/src/lib/stats/performanceStats.ts",
+    "frontend/src/lib/vision/extractFromScreenshot.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AnalysisDashboard.tsx",
+    "frontend/src/state/historyStore.ts",
+    "frontend/src/state/settingsStore.ts",
+    "frontend/src/types/analysis.ts",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

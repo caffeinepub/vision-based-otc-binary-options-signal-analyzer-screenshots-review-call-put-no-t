@@ -1,0 +1,342 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T15:50:03.991Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 12,
+    "implemented": 11,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Implement screenshot upload flow for OTC chart images (one-at-a-time), including basic validation (file type/size), preview, and an upload history queue that retains the last 10–20 analyses for later review.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AnalysisDashboard.tsx",
+          "frontend/src/components/upload/ScreenshotUploadCard.tsx",
+          "frontend/src/components/history/AnalysisHistoryPanel.tsx",
+          "frontend/src/state/historyStore.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AnalysisDashboard.tsx",
+          "frontend/src/components/upload/ScreenshotUploadCard.tsx",
+          "frontend/src/components/history/AnalysisHistoryPanel.tsx",
+          "frontend/src/state/historyStore.ts",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Add Internet Identity sign-in to associate saved history and performance stats with the signed-in principal, and provide a clear signed-in/signed-out UI state.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/auth/LoginButton.tsx",
+          "frontend/src/components/auth/ProfileSetupModal.tsx",
+          "frontend/src/hooks/useUserProfile.ts",
+          "frontend/src/components/auth/AuthGate.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/auth/LoginButton.tsx",
+          "frontend/src/components/auth/ProfileSetupModal.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Establish a coherent, distinctive visual theme (colors, typography, layout, component styling) for a trading analysis dashboard and apply it consistently across all screens in English; avoid blue/purple as primary brand colors.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/components/layout/AppShell.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/components/layout/AppShell.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Generate and include required static image assets for the UI (logo and signal icons) and render them from frontend static assets without routing images through the backend.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/assets/generated/otc-signal-lab-logo.dim_512x512.png",
+          "frontend/public/assets/generated/icon-call.dim_128x128.png",
+          "frontend/public/assets/generated/icon-put.dim_128x128.png",
+          "frontend/public/assets/generated/icon-no-trade.dim_128x128.png",
+          "frontend/public/assets/generated/bg-dashboard-texture.dim_1600x900.png",
+          "frontend/src/components/layout/AppShell.tsx",
+          "frontend/src/components/signal/SignalResultCard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/public/assets/generated/otc-signal-lab-logo.dim_512x512.png",
+          "frontend/public/assets/generated/icon-call.dim_128x128.png",
+          "frontend/public/assets/generated/icon-put.dim_128x128.png",
+          "frontend/public/assets/generated/icon-no-trade.dim_128x128.png",
+          "frontend/public/assets/generated/bg-dashboard-texture.dim_1600x900.png",
+          "frontend/src/components/layout/AppShell.tsx",
+          "frontend/src/components/signal/SignalResultCard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add backend support for storing per-user analysis sessions: uploaded-image metadata reference (frontend-side), extracted candle/indicator features, user-corrected values, generated signal output, confidence score, timestamp, and optional outcome (win/loss/unknown).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Use the platform’s built-in vision extraction step to derive structured features from the uploaded screenshot, including candle properties (direction/color, body size, wick-to-body ratios, classification patterns) and indicator states/values (e.g., RSI value/state and Bollinger status), then present a Review & Confirm step that allows the user to edit/correct the extracted fields before generating the final signal.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/vision/extractFromScreenshot.ts",
+          "frontend/src/components/review/ReviewConfirmPanel.tsx",
+          "frontend/src/types/analysis.ts",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/vision/extractFromScreenshot.ts",
+          "frontend/src/components/review/ReviewConfirmPanel.tsx",
+          "frontend/src/types/analysis.ts",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Implement a combined strategy signal engine that outputs one of CALL / PUT / NO TRADE plus a numeric confidence score, using: (a) Color Follows Color momentum, (b) Trap Wick Reversal, and (c) candle-classification filters; the engine must support 1-minute candle decisioning.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/engine/combinedSignalEngine.ts",
+          "frontend/src/components/signal/SignalResultCard.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/engine/combinedSignalEngine.ts",
+          "frontend/src/components/signal/SignalResultCard.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Limit asset selection to exactly two OTC assets: EUR/USD OTC and USD/JPY OTC; allow the user to choose which asset they are analyzing for each upload/session and store that choice with the result.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/asset/AssetPicker.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/asset/AssetPicker.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Provide a multi-timeframe confluence dashboard that summarizes signals/conditions for S30, M1, and M5 side-by-side for the same asset/session, and clearly indicates when confluence supports a higher-probability entry.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/confluence/confluenceEngine.ts",
+          "frontend/src/components/confluence/ConfluenceDashboard.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/confluence/confluenceEngine.ts",
+          "frontend/src/components/confluence/ConfluenceDashboard.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Add an advanced risk calculator that enforces 2% risk-per-trade and a configurable daily stop-loss limit; show calculated stake sizing guidance and prevent the user from recording new trades as “taken” once the daily stop-loss limit is hit.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/risk/riskCalculator.ts",
+          "frontend/src/components/risk/RiskPanel.tsx",
+          "frontend/src/state/settingsStore.ts",
+          "frontend/src/components/history/OutcomeControls.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/risk/riskCalculator.ts",
+          "frontend/src/components/risk/RiskPanel.tsx",
+          "frontend/src/state/settingsStore.ts",
+          "frontend/src/components/history/OutcomeControls.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Implement a win/loss tracker that allows the user to mark each generated signal outcome (Win/Loss/Not Taken/Unknown) and shows live performance stats (win-rate, total trades taken, streaks) computed from stored history.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/stats/PerformanceStatsPanel.tsx",
+          "frontend/src/lib/stats/performanceStats.ts",
+          "frontend/src/components/history/OutcomeControls.tsx",
+          "frontend/src/hooks/useTradeAnalyses.ts",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/stats/PerformanceStatsPanel.tsx",
+          "frontend/src/lib/stats/performanceStats.ts",
+          "frontend/src/components/history/OutcomeControls.tsx",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Add a “00-second” 1-minute candle timer with a visual countdown to the next candle open and an optional sound alert when a new candle opens; allow the user to enable/disable sound.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/timer/CandleTimer.tsx",
+          "frontend/src/state/settingsStore.ts",
+          "frontend/src/pages/AnalysisDashboard.tsx",
+          "frontend/public/assets/sounds/candle-open.mp3"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/timer/CandleTimer.tsx",
+          "frontend/src/state/settingsStore.ts",
+          "frontend/src/pages/AnalysisDashboard.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/package.json",
+    "build-template/pnpm-lock.yaml",
+    "build-template/pnpm-workspace.yaml",
+    "build-template/scripts/prune-unused-images.js",
+    "build-template/scripts/resize-images.js",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/backend/system-idl/aaaaa-aa.did",
+    "build-template/src/frontend/canister.yaml",
+    "build-template/src/frontend/components.json",
+    "build-template/src/frontend/env.json",
+    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
+    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
+    "build-template/src/frontend/eslint.config.js",
+    "build-template/src/frontend/package.json",
+    "build-template/src/frontend/postcss.config.js",
+    "build-template/src/frontend/src/components/ui/accordion.tsx",
+    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
+    "build-template/src/frontend/src/components/ui/alert.tsx",
+    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
+    "build-template/src/frontend/src/components/ui/avatar.tsx",
+    "build-template/src/frontend/src/components/ui/badge.tsx",
+    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
+    "build-template/src/frontend/src/components/ui/button.tsx",
+    "build-template/src/frontend/src/components/ui/calendar.tsx",
+    "build-template/src/frontend/src/components/ui/card.tsx",
+    "build-template/src/frontend/src/components/ui/carousel.tsx",
+    "build-template/src/frontend/src/components/ui/chart.tsx",
+    "build-template/src/frontend/src/components/ui/checkbox.tsx",
+    "build-template/src/frontend/src/components/ui/collapsible.tsx",
+    "build-template/src/frontend/src/components/ui/command.tsx",
+    "build-template/src/frontend/src/components/ui/context-menu.tsx",
+    "build-template/src/frontend/src/components/ui/dialog.tsx",
+    "build-template/src/frontend/src/components/ui/drawer.tsx",
+    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
+    "build-template/src/frontend/src/components/ui/form.tsx",
+    "build-template/src/frontend/src/components/ui/hover-card.tsx",
+    "build-template/src/frontend/src/components/ui/input-otp.tsx",
+    "build-template/src/frontend/src/components/ui/input.tsx",
+    "build-template/src/frontend/src/components/ui/label.tsx",
+    "build-template/src/frontend/src/components/ui/menubar.tsx",
+    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
+    "build-template/src/frontend/src/components/ui/pagination.tsx",
+    "build-template/src/frontend/src/components/ui/popover.tsx",
+    "build-template/src/frontend/src/components/ui/progress.tsx",
+    "build-template/src/frontend/src/components/ui/radio-group.tsx",
+    "build-template/src/frontend/src/components/ui/resizable.tsx",
+    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
+    "build-template/src/frontend/src/components/ui/select.tsx",
+    "build-template/src/frontend/src/components/ui/separator.tsx",
+    "build-template/src/frontend/src/components/ui/sheet.tsx",
+    "build-template/src/frontend/src/components/ui/sidebar.tsx",
+    "build-template/src/frontend/src/components/ui/skeleton.tsx",
+    "build-template/src/frontend/src/components/ui/slider.tsx",
+    "build-template/src/frontend/src/components/ui/sonner.tsx",
+    "build-template/src/frontend/src/components/ui/switch.tsx",
+    "build-template/src/frontend/src/components/ui/table.tsx",
+    "build-template/src/frontend/src/components/ui/tabs.tsx",
+    "build-template/src/frontend/src/components/ui/textarea.tsx",
+    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
+    "build-template/src/frontend/src/components/ui/toggle.tsx",
+    "build-template/src/frontend/src/components/ui/tooltip.tsx",
+    "build-template/src/frontend/src/hooks/use-mobile.tsx",
+    "build-template/src/frontend/src/lib/utils.ts",
+    "build-template/src/frontend/tsconfig.json",
+    "build-template/src/frontend/vite.config.js",
+    "build-template/tsconfig.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/public/assets/generated/bg-dashboard-texture.dim_1600x900.png",
+    "frontend/public/assets/generated/icon-call.dim_128x128.png",
+    "frontend/public/assets/generated/icon-no-trade.dim_128x128.png",
+    "frontend/public/assets/generated/icon-put.dim_128x128.png",
+    "frontend/public/assets/generated/otc-signal-lab-logo.dim_512x512.png",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/asset/AssetPicker.tsx",
+    "frontend/src/components/auth/LoginButton.tsx",
+    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "frontend/src/components/confluence/ConfluenceDashboard.tsx",
+    "frontend/src/components/history/AnalysisHistoryPanel.tsx",
+    "frontend/src/components/history/OutcomeControls.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/review/ReviewConfirmPanel.tsx",
+    "frontend/src/components/risk/RiskPanel.tsx",
+    "frontend/src/components/signal/SignalResultCard.tsx",
+    "frontend/src/components/stats/PerformanceStatsPanel.tsx",
+    "frontend/src/components/timer/CandleTimer.tsx",
+    "frontend/src/components/upload/ScreenshotUploadCard.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/confluence/confluenceEngine.ts",
+    "frontend/src/lib/engine/combinedSignalEngine.ts",
+    "frontend/src/lib/risk/riskCalculator.ts",
+    "frontend/src/lib/stats/performanceStats.ts",
+    "frontend/src/lib/vision/extractFromScreenshot.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AnalysisDashboard.tsx",
+    "frontend/src/state/historyStore.ts",
+    "frontend/src/state/settingsStore.ts",
+    "frontend/src/types/analysis.ts",
+    "frontend/src/ui-summary.json",
+    "frontend/src/utils/StorageClient.ts",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

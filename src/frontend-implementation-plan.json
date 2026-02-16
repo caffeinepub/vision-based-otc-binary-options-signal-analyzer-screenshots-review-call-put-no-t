@@ -1,0 +1,371 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "OTC Signal Lab — Frontend trading screenshot analyzer & tracking dashboard",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Single screenshot upload with validation, preview, and capped (20) analysis history for later review.",
+      "acceptanceCriteria": [
+        "User can select and upload a single image at a time (PNG/JPG/WebP).",
+        "An image preview is shown before analysis starts.",
+        "After each analysis, the upload+result is added to a history list capped at 20 items, with oldest items dropping off automatically.",
+        "User can open a prior history item to view its extracted values, final signal, confidence, and win/loss outcome (if set)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "create",
+          "description": "Create the main analysis dashboard screen containing: one-at-a-time screenshot picker, file type/size validation, pre-analysis preview, and an analysis history list capped at 20 items."
+        },
+        {
+          "path": "frontend/src/components/upload/ScreenshotUploadCard.tsx",
+          "operation": "create",
+          "description": "Implement the upload UI card with single-file input, basic validation (PNG/JPG/WebP + max size), and preview rendering prior to starting extraction/analysis. Use shadcn-ui composed components (e.g., Card/Button/Input) to keep styling consistent; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/history/AnalysisHistoryPanel.tsx",
+          "operation": "create",
+          "description": "Implement the history queue UI that displays up to 20 recent analyses with selection to open any item. Use shadcn-ui composed components (e.g., ScrollArea, Badge, Card) for consistent layout; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/state/historyStore.ts",
+          "operation": "create",
+          "description": "Add a small client-side store/utilities for maintaining a capped history list (max 20) including in-memory state and optional local persistence when signed out (without requiring backend changes)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create and wire the application shell so the AnalysisDashboard is reachable as the main screen and history item details are viewable (either in-panel or via a simple view state). Use shadcn-ui composed components for shell layout; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Run vision extraction on uploaded screenshot, show editable Review & Confirm fields, and use confirmed values for signal generation (with manual entry if extraction incomplete).",
+      "acceptanceCriteria": [
+        "After uploading an image, the app displays an extraction result panel with editable fields for candle features and indicator states/values.",
+        "User can modify extracted values and must click “Confirm” to proceed to signal generation.",
+        "The confirmed (possibly edited) values are what the signal engine uses and are saved into the analysis record.",
+        "If extraction fails or is incomplete, the UI clearly indicates missing fields and still allows manual entry before confirmation."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/vision/extractFromScreenshot.ts",
+          "operation": "create",
+          "description": "Implement the frontend integration wrapper for the platform’s built-in vision extraction step, returning a structured draft feature object and an explicit list of missing/low-confidence fields (so the UI can prompt manual entry)."
+        },
+        {
+          "path": "frontend/src/components/review/ReviewConfirmPanel.tsx",
+          "operation": "create",
+          "description": "Create the Review & Confirm UI with editable fields for candle features and indicator values/states, plus clear missing-field indicators and a required Confirm action. Use shadcn-ui composed form components (e.g., Form, Input, Select, Alert) for consistent editing UX; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/types/analysis.ts",
+          "operation": "create",
+          "description": "Define frontend-friendly types for extracted features, corrected features, per-timeframe outputs, and a unified analysis session model used across uploader, review, engine, history, and stats."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Wire the flow: upload -> extraction draft -> ReviewConfirmPanel edits -> Confirm -> signal generation + persistence + history update, while allowing manual completion if extraction is incomplete."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Frontend combined strategy signal engine for 1-minute decisioning producing CALL/PUT/NO TRADE with confidence and rationale tags.",
+      "acceptanceCriteria": [
+        "Signal output is always one of: CALL, PUT, NO TRADE.",
+        "A confidence score is shown (e.g., 0–100 or 0.0–1.0) and stored with the record.",
+        "The UI shows which strategy components contributed to the final decision (at least as tags or a short rationale list).",
+        "If strategy conditions conflict or confidence is below a defined threshold, the engine returns NO TRADE."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/engine/combinedSignalEngine.ts",
+          "operation": "create",
+          "description": "Implement the combined CALL/PUT/NO TRADE engine using (a) Color Follows Color momentum, (b) Trap Wick Reversal, and (c) candle-classification filters; return signal, numeric confidence, and a list of contributing rationale tags."
+        },
+        {
+          "path": "frontend/src/components/signal/SignalResultCard.tsx",
+          "operation": "create",
+          "description": "Create a result card that shows final signal, confidence score, and strategy contribution tags/rationale list. Use shadcn-ui composed components (e.g., Card, Badge) and the generated signal icons for visual clarity; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Call the combinedSignalEngine only after Review & Confirm; render SignalResultCard; ensure conflicts/low confidence yield NO TRADE and are shown clearly in the UI."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Restrict asset selection to exactly EUR/USD OTC and USD/JPY OTC and store/display the chosen asset per session.",
+      "acceptanceCriteria": [
+        "Asset picker contains only EUR/USD OTC and USD/JPY OTC.",
+        "Selected asset is displayed on the analysis result screen and saved in history.",
+        "Attempting to set any other asset is not possible in the UI."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/asset/AssetPicker.tsx",
+          "operation": "create",
+          "description": "Create an asset picker UI limited strictly to EUR/USD OTC and USD/JPY OTC, returning only the backend Asset enum values. Use shadcn-ui composed Select/RadioGroup components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Wire AssetPicker into each analysis session (required before analysis), display the selected asset on result/history items, and prevent any non-allowed asset values from being set."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Multi-timeframe confluence dashboard for S30, M1, M5 with an overall confluence state stored per analysis.",
+      "acceptanceCriteria": [
+        "Dashboard displays three columns or cards labeled S30, M1, M5 with their derived conditions and/or sub-signal.",
+        "An overall confluence indicator is shown (e.g., “Aligned”, “Mixed”, “No Confluence”).",
+        "Confluence summary is stored with the analysis record (at least the per-timeframe outputs and the overall confluence state)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/confluence/confluenceEngine.ts",
+          "operation": "create",
+          "description": "Implement confluence computation that produces per-timeframe outputs for S30, M1, M5 and an overall confluence state (Aligned/Mixed/No Confluence) from confirmed features."
+        },
+        {
+          "path": "frontend/src/components/confluence/ConfluenceDashboard.tsx",
+          "operation": "create",
+          "description": "Create the side-by-side confluence UI (S30/M1/M5 cards) and a prominent overall indicator. Use shadcn-ui composed components (e.g., Card, Badge) for consistent dashboard visuals; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Render ConfluenceDashboard for the current session and persist the confluence summary alongside the session data stored in history (and forwarded to backend storage when signed in)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Advanced risk calculator enforcing 2% risk-per-trade and a daily stop-loss limit; block marking new trades as taken when limit is hit.",
+      "acceptanceCriteria": [
+        "User can enter account balance and daily stop-loss limit (in currency or percent, but consistent within the UI).",
+        "App computes 2% risk-per-trade amount and displays it clearly.",
+        "When cumulative daily losses (from recorded outcomes) reaches the stop-loss limit, the UI shows a “Stop for today” state and blocks marking additional signals as taken/wagered (while still allowing analysis/history review)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/risk/riskCalculator.ts",
+          "operation": "create",
+          "description": "Implement risk calculations: 2% risk-per-trade and daily stop-loss enforcement based on the current day’s recorded outcomes from history."
+        },
+        {
+          "path": "frontend/src/components/risk/RiskPanel.tsx",
+          "operation": "create",
+          "description": "Create the risk panel UI for account balance + daily stop-loss inputs, computed 2% stake guidance, and a clear 'Stop for today' state. Use shadcn-ui composed form components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/state/settingsStore.ts",
+          "operation": "create",
+          "description": "Add a small settings store for account balance, stop-loss configuration, and sound toggle persistence (local storage), scoped to frontend."
+        },
+        {
+          "path": "frontend/src/components/history/OutcomeControls.tsx",
+          "operation": "create",
+          "description": "Implement outcome/taken controls that respect the daily stop-loss lockout (disable/guard 'taken' style actions once stop-loss hit) while allowing review and non-taken updates. Use shadcn-ui composed components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Wire RiskPanel into the dashboard, compute cumulative daily losses from stored outcomes, and enforce UI-level blocking of marking additional signals as taken when stop-loss is reached."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Win/loss tracker with per-analysis outcome marking (Win/Loss/Not Taken/Unknown) and live performance stats computed from stored history.",
+      "acceptanceCriteria": [
+        "Each history item has controls to set outcome to Win, Loss, Not Taken, or Unknown.",
+        "Stats panel updates immediately after outcome changes and includes win-rate based on taken trades only.",
+        "Outcomes and computed aggregates persist per user via backend storage."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/stats/PerformanceStatsPanel.tsx",
+          "operation": "create",
+          "description": "Create a stats panel showing win-rate (taken trades only), total trades taken, and streaks; update reactively as outcomes change. Use shadcn-ui composed components for cards/badges; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/lib/stats/performanceStats.ts",
+          "operation": "create",
+          "description": "Implement pure functions to compute aggregates (win-rate on taken trades, totals, streaks) from the analysis history model."
+        },
+        {
+          "path": "frontend/src/components/history/OutcomeControls.tsx",
+          "operation": "modify",
+          "description": "Add Win/Loss/Not Taken/Unknown controls per history item and emit updates to the session model so stats update immediately. Use shadcn-ui composed components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useTradeAnalyses.ts",
+          "operation": "create",
+          "description": "Add React Query hooks that load and update analyses via the existing backendInterface (e.g., getTradeAnalysesSortedByTime, getTradeAnalysis, storeTradeAnalysis) when the user is authenticated; keep the UI responsive with optimistic updates."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Wire outcome changes to both local state and (when signed in) backend persistence using useTradeAnalyses, and ensure PerformanceStatsPanel updates immediately after changes."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "00-second 1-minute candle timer with visual countdown and optional sound alert at candle open.",
+      "acceptanceCriteria": [
+        "Timer visibly counts down and reaches 00 at candle open, then resets for the next minute.",
+        "A sound alert plays at candle open when enabled, and does not play when disabled.",
+        "Timer UI is available on the main analysis screen and remains understandable without relying on audio."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/timer/CandleTimer.tsx",
+          "operation": "create",
+          "description": "Create a 1-minute countdown timer component that hits 00 at candle open and resets; include a sound toggle and accessible visual cues. Use shadcn-ui composed components (e.g., Switch, Badge) for consistent styling; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/state/settingsStore.ts",
+          "operation": "modify",
+          "description": "Add timer sound-enabled preference to the existing frontend settings persistence."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "Render CandleTimer prominently on the main analysis screen and ensure it remains functional/clear without audio enabled."
+        },
+        {
+          "path": "frontend/public/assets/sounds/candle-open.mp3",
+          "operation": "create",
+          "description": "Add a small local audio asset for the candle-open alert (served as a frontend static asset)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Internet Identity sign-in/out UI, profile setup (name) on first login, and signed-in state that loads/stores per-user history and stats.",
+      "acceptanceCriteria": [
+        "User can sign in and sign out with Internet Identity.",
+        "When signed out, the app either disables persistence features or clearly indicates that saving history requires signing in.",
+        "When signed in, history loads automatically from the backend for that principal."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/LoginButton.tsx",
+          "operation": "create",
+          "description": "Create a login/logout button using the existing useInternetIdentity hook, clearing cached React Query data on logout for a clear signed-out state. Follow the authorization component’s frontend guidance; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/ProfileSetupModal.tsx",
+          "operation": "create",
+          "description": "Create a first-login modal that prompts for a user name and saves it via getCallerUserProfile/saveCallerUserProfile, avoiding principal-id display. Use shadcn-ui composed Dialog/Form components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useUserProfile.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for getCallerUserProfile/saveCallerUserProfile with proper 'enabled' gating based on useActor availability to prevent modal flash, following the authorization component guidance."
+        },
+        {
+          "path": "frontend/src/components/auth/AuthGate.tsx",
+          "operation": "create",
+          "description": "Create an auth gate wrapper that provides a clear signed-in/signed-out UX: show sign-in prompt when signed out and enable backend persistence only when signed in (while still allowing local-only analysis if desired by the UI). Use shadcn-ui composed components for messaging; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/AnalysisDashboard.tsx",
+          "operation": "modify",
+          "description": "On authenticated state, automatically load recent analyses from backend (last 20) using useTradeAnalyses; on signed-out state, clearly indicate persistence requires sign-in and keep local history behavior consistent."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add top app header with LoginButton and user name (from profile) when available; wrap the main dashboard with AuthGate so signed-in/signed-out states are clear. Use shadcn-ui composed components; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Apply a consistent English-language trading dashboard theme across screens, avoiding blue/purple as primary brand colors.",
+      "acceptanceCriteria": [
+        "All user-facing UI strings are in English.",
+        "Theme is applied consistently to navigation, cards, forms, tables/history, and status badges.",
+        "Primary palette does not use blue/purple as the main brand colors (accent use is acceptable but not dominant)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Create global styling and CSS variables for a dark, trading-dashboard theme with a non-blue/purple primary (e.g., amber/green as primary accents), ensuring consistent typography and component surface styling."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust theme tokens (CSS variable defaults and/or extended palette usage) to align with the chosen non-blue/purple primary brand direction while keeping shadcn-ui token structure intact."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "create",
+          "description": "Create a reusable app shell layout (header, background texture, content container) that enforces consistent spacing, card styling, and English UI copy. Use shadcn-ui composed components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap the dashboard in AppShell and ensure all visible UI strings across composed components are in English."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Include required generated static images (logo, signal icons, background texture) as frontend assets and render them directly in the UI.",
+      "acceptanceCriteria": [
+        "Generated images are stored under frontend/public/assets/generated and referenced directly by the frontend.",
+        "Logo and signal icons appear in the UI (e.g., header/app shell and signal badges/cards).",
+        "No backend endpoints are used to serve these static images."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/otc-signal-lab-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated logo asset at the required path for direct frontend usage."
+        },
+        {
+          "path": "frontend/public/assets/generated/icon-call.dim_128x128.png",
+          "operation": "create",
+          "description": "Add the generated CALL icon asset at the required path for direct frontend usage."
+        },
+        {
+          "path": "frontend/public/assets/generated/icon-put.dim_128x128.png",
+          "operation": "create",
+          "description": "Add the generated PUT icon asset at the required path for direct frontend usage."
+        },
+        {
+          "path": "frontend/public/assets/generated/icon-no-trade.dim_128x128.png",
+          "operation": "create",
+          "description": "Add the generated NO TRADE icon asset at the required path for direct frontend usage."
+        },
+        {
+          "path": "frontend/public/assets/generated/bg-dashboard-texture.dim_1600x900.png",
+          "operation": "create",
+          "description": "Add the generated dashboard background texture asset at the required path for direct frontend usage."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Render the logo (frontend/public/assets/generated/otc-signal-lab-logo.dim_512x512.png) in the header and apply the background texture (frontend/public/assets/generated/bg-dashboard-texture.dim_1600x900.png) in the app shell background. Use standard static asset loading (no backend)."
+        },
+        {
+          "path": "frontend/src/components/signal/SignalResultCard.tsx",
+          "operation": "modify",
+          "description": "Render the appropriate signal icon (frontend/public/assets/generated/icon-call.dim_128x128.png, frontend/public/assets/generated/icon-put.dim_128x128.png, frontend/public/assets/generated/icon-no-trade.dim_128x128.png) alongside the signal badge, using direct frontend static assets."
+        }
+      ]
+    }
+  ]
+}

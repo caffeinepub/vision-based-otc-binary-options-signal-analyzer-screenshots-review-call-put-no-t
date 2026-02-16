@@ -1,0 +1,178 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Vision-based 1-minute OTC binary trading signal analyzer for Pocket Option using screenshot uploads, built-in AI vision extraction with Review & Confirm, combined strategy engine, and win/loss performance tracking.",
+  "architectural_notes": [
+    "No broker API/trade execution: app is analysis/signals only to avoid broker detection.",
+    "Primary data source is user-provided screenshots; extraction uses built-in AI vision (not OpenCV/Python).",
+    "Include a mandatory Review & Confirm UI step before signal computation to mitigate vision misreads.",
+    "Persist a small local history queue (10–20 items) linking screenshot, extracted fields, signal, and win/loss label."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Modern minimal logo mark, candle + magnifier motif, dark background friendly (otc-signal-lab-logo.dim_512x512.png)\n- CALL icon, upward candle/arrow glyph, flat style (icon-call.dim_128x128.png)\n- PUT icon, downward candle/arrow glyph, flat style (icon-put.dim_128x128.png)\n- NO TRADE icon, neutral pause/stop glyph, flat style (icon-no-trade.dim_128x128.png)\n- Dashboard background texture, subtle grid + market tape feel, dark neutral (bg-dashboard-texture.dim_1600x900.png)",
+  "existing_features": [
+    {
+      "id": "feature-implement-screenshot-upload-flow-for-otc-chart-images-one-at-a-time-including-basic-validation-file-type-size-preview-and-an-upload-history-queue-that-retains-the-last-10-20-analyses-for-later-review",
+      "title": "Implement screenshot upload flow for OTC chart images (one-at-a-time), including basic validation (file type/size), preview, and an upload history queue that retains the last 10–20 analyses for later review.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-use-the-platform-s-built-in-vision-extraction-step-to-derive-structured-features-from-the-uploaded-screenshot-including-candle-properties-direction-color-body-size-wick-to-body-ratios-classification-patterns-and-indicator-states-values-e-g-rsi-value-state-and-bollinger-status-then-present-a-review-confirm-step-that-allows-the-user-to-edit-correct-the-extracted-fields-before-generating-the-final-signal",
+      "title": "Use the platform’s built-in vision extraction step to derive structured features from the uploaded screenshot, including candle properties (direction/color, body size, wick-to-body ratios, classification patterns) and indicator states/values (e.g., RSI value/state and Bollinger status), then present a Review & Confirm step that allows the user to edit/correct the extracted fields before generating the final signal.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-combined-strategy-signal-engine-that-outputs-one-of-call-put-no-trade-plus-a-numeric-confidence-score-using-a-color-follows-color-momentum-b-trap-wick-reversal-and-c-candle-classification-filters-the-engine-must-support-1-minute-candle-decisioning",
+      "title": "Implement a combined strategy signal engine that outputs one of CALL / PUT / NO TRADE plus a numeric confidence score, using: (a) Color Follows Color momentum, (b) Trap Wick Reversal, and (c) candle-classification filters; the engine must support 1-minute candle decisioning.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-limit-asset-selection-to-exactly-two-otc-assets-eur-usd-otc-and-usd-jpy-otc-allow-the-user-to-choose-which-asset-they-are-analyzing-for-each-upload-session-and-store-that-choice-with-the-result",
+      "title": "Limit asset selection to exactly two OTC assets: EUR/USD OTC and USD/JPY OTC; allow the user to choose which asset they are analyzing for each upload/session and store that choice with the result.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-a-multi-timeframe-confluence-dashboard-that-summarizes-signals-conditions-for-s30-m1-and-m5-side-by-side-for-the-same-asset-session-and-clearly-indicates-when-confluence-supports-a-higher-probability-entry",
+      "title": "Provide a multi-timeframe confluence dashboard that summarizes signals/conditions for S30, M1, and M5 side-by-side for the same asset/session, and clearly indicates when confluence supports a higher-probability entry.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-advanced-risk-calculator-that-enforces-2-risk-per-trade-and-a-configurable-daily-stop-loss-limit-show-calculated-stake-sizing-guidance-and-prevent-the-user-from-recording-new-trades-as-taken-once-the-daily-stop-loss-limit-is-hit",
+      "title": "Add an advanced risk calculator that enforces 2% risk-per-trade and a configurable daily stop-loss limit; show calculated stake sizing guidance and prevent the user from recording new trades as “taken” once the daily stop-loss limit is hit.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-win-loss-tracker-that-allows-the-user-to-mark-each-generated-signal-outcome-win-loss-not-taken-unknown-and-shows-live-performance-stats-win-rate-total-trades-taken-streaks-computed-from-stored-history",
+      "title": "Implement a win/loss tracker that allows the user to mark each generated signal outcome (Win/Loss/Not Taken/Unknown) and shows live performance stats (win-rate, total trades taken, streaks) computed from stored history.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-00-second-1-minute-candle-timer-with-a-visual-countdown-to-the-next-candle-open-and-an-optional-sound-alert-when-a-new-candle-opens-allow-the-user-to-enable-disable-sound",
+      "title": "Add a “00-second” 1-minute candle timer with a visual countdown to the next candle open and an optional sound alert when a new candle opens; allow the user to enable/disable sound.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-internet-identity-sign-in-to-associate-saved-history-and-performance-stats-with-the-signed-in-principal-and-provide-a-clear-signed-in-signed-out-ui-state",
+      "title": "Add Internet Identity sign-in to associate saved history and performance stats with the signed-in principal, and provide a clear signed-in/signed-out UI state.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-establish-a-coherent-distinctive-visual-theme-colors-typography-layout-component-styling-for-a-trading-analysis-dashboard-and-apply-it-consistently-across-all-screens-in-english-avoid-blue-purple-as-primary-brand-colors",
+      "title": "Establish a coherent, distinctive visual theme (colors, typography, layout, component styling) for a trading analysis dashboard and apply it consistently across all screens in English; avoid blue/purple as primary brand colors.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-include-required-static-image-assets-for-the-ui-logo-and-signal-icons-and-render-them-from-frontend-static-assets-without-routing-images-through-the-backend",
+      "title": "Generate and include required static image assets for the UI (logo and signal icons) and render them from frontend static assets without routing images through the backend.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Screenshot upload input for OTC chart images (one-at-a-time) to drive 1-minute signal generation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Use built-in AI vision model to extract candle features (color, wick-to-body ratio, candle classification) and indicator values (e.g., RSI, Bollinger status) from screenshots",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Review & Confirm step to display extracted values and allow manual correction before generating the final signal",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Signal engine outputs CALL / PUT / NO TRADE with confidence score using combined strategies (Color Follows Color momentum + Trap Wick Reversal) and candle classification filters",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Dual OTC asset analysis limited to EUR/USD OTC and USD/JPY OTC",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Multi-timeframe confluence dashboard checking S30, M1, and M5 simultaneously to support higher-probability entries",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Advanced risk calculator enforcing 2% risk-per-trade and a daily stop-loss limit",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Win/Loss tracker: log every signal and allow user to mark outcomes to compute live historical win-rate/accuracy",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "History queue storing last 10–20 uploads/signals for later review and win/loss updates",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "“00-second” 1-minute candle timer with visual countdown and sound alert for entries at new candle open",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add backend support for storing per-user analysis sessions: uploaded-image metadata reference (frontend-side), extracted candle/indicator features, user-corrected values, generated signal output, confidence score, timestamp, and optional outcome (win/loss/unknown).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "OTC Signal Lab",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

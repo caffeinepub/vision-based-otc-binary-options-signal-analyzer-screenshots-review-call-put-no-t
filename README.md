@@ -1,2 +1,3 @@
-# vision-based-otc-binary-options-signal-analyzer-screenshots-review-call-put-no-t
-Exported from Caffeine project: Vision-based OTC binary options signal analyzer (screenshots → review → CALL/PUT/NO TRADE) with history, confluence, risk tools, and win-rate tracking
+## OTC Signal Lab
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

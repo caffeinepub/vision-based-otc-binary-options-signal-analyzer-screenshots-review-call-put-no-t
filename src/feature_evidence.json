@@ -1,0 +1,242 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-screenshot-upload-flow-for-otc-chart-images-one-at-a-time-including-basic-validation-file-type-size-preview-and-an-upload-history-queue-that-retains-the-last-10-20-analyses-for-later-review",
+      "featureTitle": "Implement screenshot upload flow for OTC chart images (one-at-a-time), including basic validation (file type/size), preview, and an upload history queue that retains the last 10–20 analyses for later review.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/history/AnalysisHistoryPanel.tsx",
+        "frontend/src/components/upload/ScreenshotUploadCard.tsx",
+        "frontend/src/pages/AnalysisDashboard.tsx",
+        "frontend/src/state/historyStore.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-use-the-platform-s-built-in-vision-extraction-step-to-derive-structured-features-from-the-uploaded-screenshot-including-candle-properties-direction-color-body-size-wick-to-body-ratios-classification-patterns-and-indicator-states-values-e-g-rsi-value-state-and-bollinger-status-then-present-a-review-confirm-step-that-allows-the-user-to-edit-correct-the-extracted-fields-before-generating-the-final-signal",
+      "featureTitle": "Use the platform’s built-in vision extraction step to derive structured features from the uploaded screenshot, including candle properties (direction/color, body size, wick-to-body ratios, classification patterns) and indicator states/values (e.g., RSI value/state and Bollinger status), then present a Review & Confirm step that allows the user to edit/correct the extracted fields before generating the final signal.",
+      "files": [
+        "frontend/src/components/review/ReviewConfirmPanel.tsx",
+        "frontend/src/lib/vision/extractFromScreenshot.ts",
+        "frontend/src/pages/AnalysisDashboard.tsx",
+        "frontend/src/types/analysis.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-a-combined-strategy-signal-engine-that-outputs-one-of-call-put-no-trade-plus-a-numeric-confidence-score-using-a-color-follows-color-momentum-b-trap-wick-reversal-and-c-candle-classification-filters-the-engine-must-support-1-minute-candle-decisioning",
+      "featureTitle": "Implement a combined strategy signal engine that outputs one of CALL / PUT / NO TRADE plus a numeric confidence score, using: (a) Color Follows Color momentum, (b) Trap Wick Reversal, and (c) candle-classification filters; the engine must support 1-minute candle decisioning.",
+      "files": [
+        "frontend/src/components/signal/SignalResultCard.tsx",
+        "frontend/src/lib/engine/combinedSignalEngine.ts",
+        "frontend/src/pages/AnalysisDashboard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-limit-asset-selection-to-exactly-two-otc-assets-eur-usd-otc-and-usd-jpy-otc-allow-the-user-to-choose-which-asset-they-are-analyzing-for-each-upload-session-and-store-that-choice-with-the-result",
+      "featureTitle": "Limit asset selection to exactly two OTC assets: EUR/USD OTC and USD/JPY OTC; allow the user to choose which asset they are analyzing for each upload/session and store that choice with the result.",
+      "files": [
+        "frontend/src/components/asset/AssetPicker.tsx",
+        "frontend/src/pages/AnalysisDashboard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-provide-a-multi-timeframe-confluence-dashboard-that-summarizes-signals-conditions-for-s30-m1-and-m5-side-by-side-for-the-same-asset-session-and-clearly-indicates-when-confluence-supports-a-higher-probability-entry",
+      "featureTitle": "Provide a multi-timeframe confluence dashboard that summarizes signals/conditions for S30, M1, and M5 side-by-side for the same asset/session, and clearly indicates when confluence supports a higher-probability entry.",
+      "files": [
+        "frontend/src/components/confluence/ConfluenceDashboard.tsx",
+        "frontend/src/lib/confluence/confluenceEngine.ts",
+        "frontend/src/pages/AnalysisDashboard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-an-advanced-risk-calculator-that-enforces-2-risk-per-trade-and-a-configurable-daily-stop-loss-limit-show-calculated-stake-sizing-guidance-and-prevent-the-user-from-recording-new-trades-as-taken-once-the-daily-stop-loss-limit-is-hit",
+      "featureTitle": "Add an advanced risk calculator that enforces 2% risk-per-trade and a configurable daily stop-loss limit; show calculated stake sizing guidance and prevent the user from recording new trades as “taken” once the daily stop-loss limit is hit.",
+      "files": [
+        "frontend/src/components/history/OutcomeControls.tsx",
+        "frontend/src/components/risk/RiskPanel.tsx",
+        "frontend/src/lib/risk/riskCalculator.ts",
+        "frontend/src/pages/AnalysisDashboard.tsx",
+        "frontend/src/state/settingsStore.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-a-win-loss-tracker-that-allows-the-user-to-mark-each-generated-signal-outcome-win-loss-not-taken-unknown-and-shows-live-performance-stats-win-rate-total-trades-taken-streaks-computed-from-stored-history",
+      "featureTitle": "Implement a win/loss tracker that allows the user to mark each generated signal outcome (Win/Loss/Not Taken/Unknown) and shows live performance stats (win-rate, total trades taken, streaks) computed from stored history.",
+      "files": [
+        "frontend/src/components/history/OutcomeControls.tsx",
+        "frontend/src/components/stats/PerformanceStatsPanel.tsx",
+        "frontend/src/lib/stats/performanceStats.ts",
+        "frontend/src/pages/AnalysisDashboard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-00-second-1-minute-candle-timer-with-a-visual-countdown-to-the-next-candle-open-and-an-optional-sound-alert-when-a-new-candle-opens-allow-the-user-to-enable-disable-sound",
+      "featureTitle": "Add a “00-second” 1-minute candle timer with a visual countdown to the next candle open and an optional sound alert when a new candle opens; allow the user to enable/disable sound.",
+      "files": [
+        "frontend/src/components/timer/CandleTimer.tsx",
+        "frontend/src/pages/AnalysisDashboard.tsx",
+        "frontend/src/state/settingsStore.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-internet-identity-sign-in-to-associate-saved-history-and-performance-stats-with-the-signed-in-principal-and-provide-a-clear-signed-in-signed-out-ui-state",
+      "featureTitle": "Add Internet Identity sign-in to associate saved history and performance stats with the signed-in principal, and provide a clear signed-in/signed-out UI state.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/auth/LoginButton.tsx",
+        "frontend/src/components/auth/ProfileSetupModal.tsx",
+        "frontend/src/pages/AnalysisDashboard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-establish-a-coherent-distinctive-visual-theme-colors-typography-layout-component-styling-for-a-trading-analysis-dashboard-and-apply-it-consistently-across-all-screens-in-english-avoid-blue-purple-as-primary-brand-colors",
+      "featureTitle": "Establish a coherent, distinctive visual theme (colors, typography, layout, component styling) for a trading analysis dashboard and apply it consistently across all screens in English; avoid blue/purple as primary brand colors.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-generate-and-include-required-static-image-assets-for-the-ui-logo-and-signal-icons-and-render-them-from-frontend-static-assets-without-routing-images-through-the-backend",
+      "featureTitle": "Generate and include required static image assets for the UI (logo and signal icons) and render them from frontend static assets without routing images through the backend.",
+      "files": [
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/components/signal/SignalResultCard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

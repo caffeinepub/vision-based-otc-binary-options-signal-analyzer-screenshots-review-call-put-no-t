@@ -1,0 +1,259 @@
+{
+  "kind": "build_request",
+  "title": "Vision-based 1-minute OTC binary signal analyzer with screenshot uploads, review/correct, and win/loss tracking",
+  "projectName": "OTC Signal Lab",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement screenshot upload flow for OTC chart images (one-at-a-time), including basic validation (file type/size), preview, and an upload history queue that retains the last 10–20 analyses for later review.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "1 screen shot uploads"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can select and upload a single image at a time (PNG/JPG/WebP).",
+        "An image preview is shown before analysis starts.",
+        "After each analysis, the upload+result is added to a history list capped at 20 items, with oldest items dropping off automatically.",
+        "User can open a prior history item to view its extracted values, final signal, confidence, and win/loss outcome (if set)."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Add backend support for storing per-user analysis sessions: uploaded-image metadata reference (frontend-side), extracted candle/indicator features, user-corrected values, generated signal output, confidence score, timestamp, and optional outcome (win/loss/unknown).",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "2.signals +win loss"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend exposes methods to create a new analysis record, list recent records (last 20), and update an existing record with user corrections and outcome.",
+        "Records persist across page refresh for the same authenticated Internet Identity principal.",
+        "Each record includes: createdAt time, asset (EUR/USD OTC or USD/JPY OTC), timeframe(s) assessed, extracted features, corrected features (if any), signal, confidence, and outcome status."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Use the platform’s built-in vision extraction step to derive structured features from the uploaded screenshot, including candle properties (direction/color, body size, wick-to-body ratios, classification patterns) and indicator states/values (e.g., RSI value/state and Bollinger status), then present a Review & Confirm step that allows the user to edit/correct the extracted fields before generating the final signal.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "3. Add all"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After uploading an image, the app displays an extraction result panel with editable fields for candle features and indicator states/values.",
+        "User can modify extracted values and must click “Confirm” to proceed to signal generation.",
+        "The confirmed (possibly edited) values are what the signal engine uses and are saved into the analysis record.",
+        "If extraction fails or is incomplete, the UI clearly indicates missing fields and still allows manual entry before confirmation."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement a combined strategy signal engine that outputs one of CALL / PUT / NO TRADE plus a numeric confidence score, using: (a) Color Follows Color momentum, (b) Trap Wick Reversal, and (c) candle-classification filters; the engine must support 1-minute candle decisioning.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "3. Add all"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Signal output is always one of: CALL, PUT, NO TRADE.",
+        "A confidence score is shown (e.g., 0–100 or 0.0–1.0) and stored with the record.",
+        "The UI shows which strategy components contributed to the final decision (at least as tags or a short rationale list).",
+        "If strategy conditions conflict or confidence is below a defined threshold, the engine returns NO TRADE."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Limit asset selection to exactly two OTC assets: EUR/USD OTC and USD/JPY OTC; allow the user to choose which asset they are analyzing for each upload/session and store that choice with the result.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "Dual OTC asset analysis limited to EUR/USD OTC and USD/JPY OTC"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Asset picker contains only EUR/USD OTC and USD/JPY OTC.",
+        "Selected asset is displayed on the analysis result screen and saved in history.",
+        "Attempting to set any other asset is not possible in the UI."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Provide a multi-timeframe confluence dashboard that summarizes signals/conditions for S30, M1, and M5 side-by-side for the same asset/session, and clearly indicates when confluence supports a higher-probability entry.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "Multi-timeframe confluence dashboard checking S30, M1, and M5 simultaneously"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard displays three columns or cards labeled S30, M1, M5 with their derived conditions and/or sub-signal.",
+        "An overall confluence indicator is shown (e.g., “Aligned”, “Mixed”, “No Confluence”).",
+        "Confluence summary is stored with the analysis record (at least the per-timeframe outputs and the overall confluence state)."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add an advanced risk calculator that enforces 2% risk-per-trade and a configurable daily stop-loss limit; show calculated stake sizing guidance and prevent the user from recording new trades as “taken” once the daily stop-loss limit is hit.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "Advanced risk calculator enforcing 2% risk-per-trade and a daily stop-loss limit"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can enter account balance and daily stop-loss limit (in currency or percent, but consistent within the UI).",
+        "App computes 2% risk-per-trade amount and displays it clearly.",
+        "When cumulative daily losses (from recorded outcomes) reaches the stop-loss limit, the UI shows a “Stop for today” state and blocks marking additional signals as taken/wagered (while still allowing analysis/history review)."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Implement a win/loss tracker that allows the user to mark each generated signal outcome (Win/Loss/Not Taken/Unknown) and shows live performance stats (win-rate, total trades taken, streaks) computed from stored history.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "2.signals +win loss"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each history item has controls to set outcome to Win, Loss, Not Taken, or Unknown.",
+        "Stats panel updates immediately after outcome changes and includes win-rate based on taken trades only.",
+        "Outcomes and computed aggregates persist per user via backend storage."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Add a “00-second” 1-minute candle timer with a visual countdown to the next candle open and an optional sound alert when a new candle opens; allow the user to enable/disable sound.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "“00-second” 1-minute candle timer with visual countdown and sound alert for entries at new candle open"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Timer visibly counts down and reaches 00 at candle open, then resets for the next minute.",
+        "A sound alert plays at candle open when enabled, and does not play when disabled.",
+        "Timer UI is available on the main analysis screen and remains understandable without relying on audio."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Add Internet Identity sign-in to associate saved history and performance stats with the signed-in principal, and provide a clear signed-in/signed-out UI state.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "Signals + win/loss tracking"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can sign in and sign out with Internet Identity.",
+        "When signed out, the app either disables persistence features or clearly indicates that saving history requires signing in.",
+        "When signed in, history loads automatically from the backend for that principal."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Establish a coherent, distinctive visual theme (colors, typography, layout, component styling) for a trading analysis dashboard and apply it consistently across all screens in English; avoid blue/purple as primary brand colors.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "Use English for any user-facing text in the build request."
+        ]
+      },
+      "acceptanceCriteria": [
+        "All user-facing UI strings are in English.",
+        "Theme is applied consistently to navigation, cards, forms, tables/history, and status badges.",
+        "Primary palette does not use blue/purple as the main brand colors (accent use is acceptable but not dominant)."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Generate and include required static image assets for the UI (logo and signal icons) and render them from frontend static assets without routing images through the backend.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-18"
+        ],
+        "quotes": [
+          "Yes build it fast in just 2 minutes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images are stored under frontend/public/assets/generated and referenced directly by the frontend.",
+        "Logo and signal icons appear in the UI (e.g., header/app shell and signal badges/cards).",
+        "No backend endpoints are used to serve these static images."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor with all logic in backend/main.mo (no additional backend services).",
+    "Do not edit files under frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui (compose them instead).",
+    "No third-party authentication providers; only Internet Identity is allowed.",
+    "Do not integrate with external broker APIs (e.g., Pocket Option) for placing trades or fetching live prices."
+  ],
+  "nonGoals": [
+    "Executing real trades or automating order placement on any binary options platform.",
+    "Providing financial advice, guarantees of profitability, or claims of expected returns.",
+    "Real-time streaming via WebSockets or other push channels.",
+    "Integrating external databases or non-IC hosting/deployment services."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Modern minimal logo mark, candle + magnifier motif, dark background friendly (otc-signal-lab-logo.dim_512x512.png)",
+      "CALL icon, upward candle/arrow glyph, flat style (icon-call.dim_128x128.png)",
+      "PUT icon, downward candle/arrow glyph, flat style (icon-put.dim_128x128.png)",
+      "NO TRADE icon, neutral pause/stop glyph, flat style (icon-no-trade.dim_128x128.png)",
+      "Dashboard background texture, subtle grid + market tape feel, dark neutral (bg-dashboard-texture.dim_1600x900.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}
